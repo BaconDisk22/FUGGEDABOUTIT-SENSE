@@ -214,11 +214,11 @@
   <pre class="mt-2 overflow-auto rounded p-2 h-full bg-black/20">{JSON.stringify(selectedNode, undefined, 2)}</pre>
 </Modal>
 
-<Card title="Nodes" {...$$restProps}>
+<Card title="Da Neighborhood" {...$$restProps}>
   <h2 slot="title" class="rounded-t flex items-center gap-2">
     <div class="flex items-center gap-2">
       <div class="grow flex items-center gap-2">
-        Nodes
+        Da Neighborhood
         {#if !$smallMode}
           <button
             title="Toggle Visibility - Currently Showing: {$nodeVisibilityMode}"
