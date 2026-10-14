@@ -44,7 +44,7 @@ The project dependencies and bundled API must be prepared first, as described be
 Clone **this fork**, including its submodules:
 
 ```sh
-git clone --recurse-submodules https://github.com/BaconDisk22/MeshSense.git
+git clone --recurse-submodules https://github.com/BaconDisk22/FUGGEDABOUTIT-SENSE.git
 cd MeshSense
 ```
 
