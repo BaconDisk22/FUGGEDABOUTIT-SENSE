@@ -4,7 +4,7 @@
   type Sample = { at: number; rssi: number | null; snr: number | null }
   let history: Record<string, Sample[]> = {}
   let watched: Record<string, boolean> = {}
-  let lastSeen: Record<string, number> = {}
+  let previousActive: Record<string, boolean> = {}
   let alerts: string[] = []
   let selected = ''
   let showHistory = false
@@ -26,13 +26,13 @@
     for (const node of $nodes) {
       const id = String(node.num)
       const heard = node.lastHeard || 0
-      const was = lastSeen[id]
-      if (watched[id] && was && was * 1000 > now - threshold() && !active(node)) {
+      const isActive = active(node)
+      if (watched[id] && previousActive[id] === true && !isActive) {
         const message = `${node.user?.longName || id} went quiet — where'd everybody go?`
         alerts = [message, ...alerts].slice(0, 15)
         if (notifications && typeof Notification !== 'undefined' && Notification.permission === 'granted') new Notification('We Got a Problem!', { body: message })
       }
-      lastSeen[id] = heard
+      previousActive[id] = isActive
       const old = history[id] ?? []
       const latest = old[old.length - 1]
       if (heard && (!latest || latest.at !== heard)) {
