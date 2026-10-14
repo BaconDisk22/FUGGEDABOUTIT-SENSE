@@ -4,7 +4,7 @@
 
 **A Garden State-flavored Meshtastic network monitor.** Ayyy, how ya doin'? Watch your nodes, check signal reports, map the neighborhood, and run traceroutes — without taking a wrong turn at the jughandle.
 
-> **Status: work in progress.** This is a community fork of [Affirmatech MeshSense](https://github.com/Affirmatech/MeshSense). The Jersey branding is in progress; the Intel macOS app has **not** yet been built, signed, notarized, or verified on Tahoe 26.7.1.
+> **Status: work in progress.** This is a community fork of [Affirmatech MeshSense](https://github.com/Affirmatech/MeshSense). The Jersey branding and Intel build automation are in progress; the Intel macOS app has **not** yet been successfully built, signed, notarized, or verified on Tahoe 26.7.1.
 
 ## 🍕 What's cookin'?
 
@@ -18,7 +18,7 @@ The Jersey names are branding ideas; existing functionality is inherited from up
 
 ## 🍎 Intel Mac — click to open
 
-The target is a normal **Fuggedaboutit Sense.app** for Intel Macs, distributed in a **DMG**. Once a working release is available, drag the app into Applications and open it from Finder. **There is no tested DMG download yet.** macOS signing/notarization and Bluetooth permissions still need verification.
+The target is a normal **Fuggedaboutit Sense.app** for Intel Macs, distributed in a **DMG**. Once a working release is available, drag the app into Applications and open it from Finder. **There is no tested DMG download yet. A GitHub Actions workflow now attempts to build an unsigned Intel DMG and stores it as a workflow artifact.** macOS signing/notarization and Bluetooth permissions still need verification.
 
 For developers, the Electron package includes an Intel macOS build script:
 
@@ -29,7 +29,7 @@ npm run build:mac:intel
 
 The project dependencies and bundled API must be prepared first, as described below. Running this command is not a guarantee that the current fork builds successfully.
 
-## 🎨 Garden State colors
+## 🚦 Builds and releases\n\nThe [Intel Mac workflow](https://github.com/BaconDisk22/FUGGEDABOUTIT-SENSE/actions/workflows/intel-mac.yml) builds the UI, API and Electron app on an Intel macOS runner, generates an original Garden State app icon, and uploads a DMG if the build succeeds. It can be started manually using **Run workflow** once merged to the default branch. A push of a `v*` tag triggers an attempt to publish the DMG in GitHub Releases. The unsigned build may require additional macOS Gatekeeper steps; no signing or notarization is configured yet.\n\nVersion numbering currently follows the Electron package version; release tags should match the packaged version. Automated update delivery is **not** configured for GitHub Releases yet.\n\n## 🎨 Garden State colors
 
 | Flavor | Color |
 | --- | --- |
