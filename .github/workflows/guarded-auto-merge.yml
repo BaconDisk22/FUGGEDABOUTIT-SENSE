@@ -1,0 +1,43 @@
+name: Guarded auto-merge
+on:
+  workflow_run:
+    workflows: ["Fuggedaboutit Sense Intel Mac"]
+    types: [completed]
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  guarded-merge:
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enable guarded auto-merge for explicitly opted-in PRs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          set -euo pipefail
+          prs="$(gh api "repos/$REPO/pulls?state=open&per_page=100")"
+          pr="$(jq -c --arg sha "$HEAD_SHA" '[.[] | select(.head.sha == $sha and .base.ref == "master" and .draft == false)] | .[0] // empty' <<<"$prs")"
+          if [[ -z "$pr" ]]; then echo "No eligible non-draft PR for head SHA"; exit 0; fi
+          number="$(jq -r '.number' <<<"$pr")"
+          labels="$(gh api "repos/$REPO/issues/$number/labels")"
+          if ! jq -e '[.[].name] | index("automerge-approved") != null' <<<"$labels" >/dev/null; then
+            echo "PR #$number not explicitly opted in"; exit 0
+          fi
+          if jq -e '[.[].name] | index("no-automerge") != null' <<<"$labels" >/dev/null; then
+            echo "PR #$number explicitly blocked"; exit 0
+          fi
+          # Reconfirm the exact head SHA after reading the labels.
+          current="$(gh api "repos/$REPO/pulls/$number")"
+          [[ "$(jq -r '.head.sha' <<<"$current")" == "$HEAD_SHA" ]] || exit 0
+          [[ "$(jq -r '.base.ref' <<<"$current")" == master ]] || exit 0
+          [[ "$(jq -r '.draft' <<<"$current")" == false ]] || exit 0
+          # Only request auto-merge; GitHub branch protections and required checks
+          # remain authoritative. Do not use --admin or bypass review requirements.
+          gh pr merge "$number" --repo "$REPO" --squash --auto --delete-branch
