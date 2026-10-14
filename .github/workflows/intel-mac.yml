@@ -1,0 +1,61 @@
+name: Fuggedaboutit Sense Intel Mac
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'ui/**'
+      - 'api/**'
+      - 'electron/**'
+      - 'scripts/**'
+      - '.github/workflows/intel-mac.yml'
+  push:
+    branches: [master]
+    tags: ['v*']
+permissions:
+  contents: write
+jobs:
+  mac-intel:
+    runs-on: macos-15-intel
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            ui/package-lock.json
+            api/package-lock.json
+            electron/package-lock.json
+      - name: Install dependencies
+        run: |
+          (cd ui && npm ci)
+          (cd api && npm ci)
+          (cd electron && npm ci)
+          (cd api/meshtastic-js && npm install && npm run build)
+          (cd api/webbluetooth && npm install && npm run build:all)
+      - name: Build bundled UI and API
+        run: |
+          (cd ui && npm run build)
+          (cd api && npm run build)
+      - name: Make Jersey app icon
+        run: |
+          python3 -m pip install --break-system-packages pillow || python3 -m pip install pillow
+          python3 scripts/make_mac_icon.py
+      - name: Build unsigned Intel macOS DMG
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: cd electron && npm run build:mac:intel
+      - name: Upload DMG artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Fuggedaboutit-Sense-macOS-Intel
+          path: electron/dist/*.dmg
+          if-no-files-found: error
+      - name: Publish tagged GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${GITHUB_REF_NAME}" electron/dist/*.dmg --generate-notes --verify-tag
