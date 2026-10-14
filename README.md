@@ -1,87 +1,102 @@
-# MeshSense
+# 🤌 FUGGEDABOUTIT SENSE 🇺🇸📡
 
-**MeshSense** is a simple, [open-source](https://github.com/Affirmatech/MeshSense) application that monitors, maps and graphically displays all the vital stats of your area's Meshtastic network including connected nodes, signal reports, trace routes and more!
+### *What exit? We already know where ya at!*
 
-![](https://affirmatech.com/meshsense.png)
+**A Garden State-flavored Meshtastic network monitor.** Ayyy, how ya doin'? Watch your nodes, check signal reports, map the neighborhood, and run traceroutes — without taking a wrong turn at the jughandle.
 
-MeshSense directly connects to your Meshtastic node via Bluetooth or WiFi and continuously provides all the information you need to assess the health of your network. For more detailed information, take a peek at our [Frequently Asked Questions](https://affirmatech.com/meshsense/faq) or [Bluetooth Tips](https://affirmatech.com/meshsense/bluetooth).
+> **Status: work in progress.** This is a community fork of [Affirmatech MeshSense](https://github.com/Affirmatech/MeshSense). The Jersey branding is in progress; the Intel macOS app has **not** yet been built, signed, notarized, or verified on Tahoe 26.7.1.
 
-## Headless Usage
+## 🍕 What's cookin'?
 
-To run MeshSense without a GUI, use the `--headless` flag. Additionally the `ACCESS_KEY` environment variable can be used to specify the privileged access key for remote connections to gain full permissions.
+- 📡 **Da Neighborhood:** View Meshtastic nodes and their network health.
+- 🗺️ **What Exit?:** Map your mesh network.
+- 📶 **How Ya Doin'?:** Inspect signals and network activity.
+- 🚗 **The Jersey Slide:** Follow traceroutes and connection paths.
+- 🤌 **Fuggedaboutit!:** A dark Garden State green, Jersey gold, and Turnpike asphalt look.
+
+The Jersey names are branding ideas; existing functionality is inherited from upstream and individual screen labels may still be updated.
+
+## 🍎 Intel Mac — click to open
+
+The target is a normal **Fuggedaboutit Sense.app** for Intel Macs, distributed in a **DMG**. Once a working release is available, drag the app into Applications and open it from Finder. **There is no tested DMG download yet.** macOS signing/notarization and Bluetooth permissions still need verification.
+
+For developers, the Electron package includes an Intel macOS build script:
 
 ```sh
-export ADDRESS=10.0.1.20  # Address of Meshtastic Node
-export PORT=5920          # Port of remote interface
-
-ACCESS_KEY=mySecretKey ./meshsense-x86_64.AppImage --headless
-
-# Alternative execution:
-dbus-run-session xvfb-run ./meshsense-arm64.AppImage --headless \
- --disable-gpu --in-process-gpu --disable-software-rasterizer
+cd electron
+npm run build:mac:intel
 ```
 
-See also [Headless FAQ](https://affirmatech.com/meshsense/faq#headless)
+The project dependencies and bundled API must be prepared first, as described below. Running this command is not a guarantee that the current fork builds successfully.
 
-## Debian Dependencies
+## 🎨 Garden State colors
 
-Ubuntu and Raspberry Pi OS users will need the following dependency installed to run the AppImage:
+| Flavor | Color |
+| --- | --- |
+| Garden State Green | `#006747` |
+| Jersey Gold | `#F2B134` |
+| Turnpike Asphalt | `#15191D` |
+| Diner Booth Charcoal | `#252B30` |
+| Tail Light Red | `#D62828` |
 
-```sh
-sudo apt install libfuse2
-```
+## 🛠️ Under da hood — development
 
-To display unicode symbols on the buttons, it may be helpful to install `fonts-noto-color-emoji`
-
-```sh
-sudo apt install fonts-noto-color-emoji
-```
-
-## Development Setup
-
-To run MeshSense from the source code, first clone the MeshSense repo:
+Clone **this fork**, including its submodules:
 
 ```sh
-git clone --recurse-submodules https://github.com/Affirmatech/MeshSense.git
+git clone --recurse-submodules https://github.com/BaconDisk22/MeshSense.git
 cd MeshSense
 ```
 
-Build `webbluetooth` Dependency.  Debian systems will need the `cmake` and `libdbus-1-dev` packages.
+Build the `webbluetooth` dependency (Debian may require `cmake` and `libdbus-1-dev`):
 
-```
+```sh
 cd api/webbluetooth
-npm i
+npm install
 npm run build:all
 cd ../..
 ```
 
-The `update.mjs` script will pull the latest code and install dependencies for the `ui`, `api`, and `electron` directories.
+The upstream `update.mjs` script installs and updates the UI, API, and Electron dependencies:
 
 ```sh
 ./update.mjs
 ```
 
-During development, the electron portion is usually not needed. First start the UI Vite service as follows:
+To run the development UI:
 
 ```sh
 cd ui
 PORT=5921 npm run dev
 ```
 
-Leave the UI running and then also start the API service. The `DEV_UI_URL` will tell the API to forward any unhandled route requests to the UI service and should use the same port as above.
+In another terminal, run the API:
 
 ```sh
 cd api
-export DEV_UI_URL=http://localhost:5921
-PORT=5920 npm run dev
+DEV_UI_URL=http://localhost:5921 PORT=5920 npm run dev
 ```
 
-The `PORT` variables in the above are optional and will default to the values in the example, but ensure `DEV_UI_URL` is present with the correct port if changed. These values may also be read from `.env` files `api/.env` and `ui/.env` respectively.
+Open the API-served interface at `http://localhost:5920/`. The `PORT` and `DEV_UI_URL` values can also be configured through `.env` files.
 
-The front-end should now be accessible by connecting to the **API** service in a browser. Be careful not to connect to the UI service by accident. http://localhost:5920/
+To build deployable components, consult `build.mjs`; outputs are placed under `api/dist` and `electron/dist`. On some systems, UI hot reload can duplicate state subscriptions; refreshing the browser resets them.
 
-Any API changes will automatically reload the service. Any UI changes will be hot-reloaded by Vite.
+## 🖥️ Headless mode
 
-**Please note:** currently certain event subscribers (particularly State variables) will duplicate their subscription when Vite hot-reloads resulting in duplicate events such as Log entries. Until this is fixed, the easiest solution is to refresh the browser to reset the events.
+The inherited MeshSense API supports `--headless`, with optional `ACCESS_KEY` for privileged remote access. Example for an upstream Linux AppImage:
 
-To build the `ui`, `api`, and `electron` components, the `build.mjs` script will accomplish this. The official electron builds are signed with an Affirmatech certificate on our build servers. The deployables will be placed in `api/dist` and `electron/dist`.
+```sh
+export ADDRESS=10.0.1.20
+export PORT=5920
+ACCESS_KEY=mySecretKey ./meshsense-x86_64.AppImage --headless
+```
+
+On Debian/Ubuntu/Raspberry Pi OS, AppImages may require `libfuse2`. For upstream headless and Bluetooth guidance, see the [MeshSense FAQ](https://affirmatech.com/meshsense/faq) and [Bluetooth tips](https://affirmatech.com/meshsense/bluetooth).
+
+## 🤝 Respect da family
+
+This project is a fork of **[Affirmatech/MeshSense](https://github.com/Affirmatech/MeshSense)**. Original code and upstream authorship remain credited. Review the repository's license and preserve all applicable notices. This Jersey-themed fork is not an official Meshtastic product.
+
+---
+
+**Made with Garden State attitude. No tolls required.** 🍕🤌
