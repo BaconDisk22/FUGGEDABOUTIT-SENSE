@@ -35,10 +35,13 @@ jobs:
         run: |
           (cd ui && npm run build)
           (cd api && npm run build)
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - name: Make Jersey app icon
         run: |
-          python3 -m pip install --user pillow
-          python3 scripts/make_mac_icon.py
+          python -m pip install Pillow
+          python scripts/make_mac_icon.py
       - name: Build unsigned Intel macOS DMG
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
