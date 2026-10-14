@@ -14,6 +14,7 @@
   import SettingsModal from './SettingsModal.svelte'
   import { hasAccess } from './lib/util'
   import News, { newsVisible } from './News.svelte'
+  import JerseyDashboard from './JerseyDashboard.svelte'
 
   export const ws = new WebSocketClient(`${import.meta.env.VITE_PATH || ''}/ws`)
   axios.defaults.baseURL = import.meta.env.VITE_PATH
@@ -46,6 +47,7 @@
 
 <main class="w-full grid grid-cols-[auto_1fr] gap-2 p-2 overflow-auto h-full">
   <News />
+  <div class="col-span-2"><JerseyDashboard /></div>
   <div class="flex flex-col gap-2 content-start h-full overflow-auto">
     {#if $hasAccess}
       <Address class="shrink-0" />

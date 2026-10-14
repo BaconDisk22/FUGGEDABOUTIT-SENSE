@@ -75,14 +75,14 @@
   let modalPage = 'Settings'
 </script>
 
-<Card title="Map" {...$$restProps}>
+<Card title="What Exit?" {...$$restProps}>
   <h2 slot="title" class="rounded-t flex items-center gap-1">
-    <div class="mr-2">Map</div>
+    <div class="mr-2">🗺️ What Exit?</div>
 
     <div class="grow">
       <button on:click={() => ($expandedMap = !$expandedMap)} class="btn font-normal text-xs">{$expandedMap ? 'Collapse' : 'Expand'}</button>
     </div>
-    <div class="text-xs text-white/50 pr-2">MeshSense {$version}</div>
+    <div class="text-xs text-white/50 pr-2">Fuggedaboutit Sense {$version}</div>
     <a href="https://affirmatech.com" target="_blank" rel="noopener" class="text-xs text-white/50 pr-2 font-normal">by Affirmatech</a>
     <a title="Support MeshSense" target="_blank" rel="noopener" class="!text-rose-400 font-bold btn text-sm hover:brightness-110" href="https://purchase.affirmatech.com/?productId=MeshSenseDonation"
       >♥</a
