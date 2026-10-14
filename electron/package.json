@@ -1,7 +1,7 @@
 {
-  "name": "meshsense",
+  "name": "fuggedaboutit-sense",
   "version": "1.1.0-beta.8",
-  "description": "MeshSense is a simple, open-source application that monitors, maps and graphically displays all the vital stats of your area's Meshtastic network including connected nodes, signal reports, trace routes and more!",
+  "description": "Garden State mesh monitoring — what exit? Meshtastic nodes, maps, signals and diagnostics with Jersey attitude.",
   "main": "./out/main/index.js",
   "author": "Affirmatech Inc.",
   "homepage": "https://affirmatech.com",
@@ -18,7 +18,8 @@
     "build:unpack": "npm run build && electron-builder --dir",
     "build:win": "npm run build && electron-builder --win --config electron-builder-config.js",
     "build:mac": "npm run build && electron-builder --mac --config electron-builder-config.js",
-    "build:linux": "npm run build && electron-builder --linux --config electron-builder-config.js"
+    "build:linux": "npm run build && electron-builder --linux --config electron-builder-config.js",
+    "build:mac:intel": "npm run build && electron-builder --mac dmg --x64 --config electron-builder-config.js"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
