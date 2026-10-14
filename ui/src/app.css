@@ -4,7 +4,7 @@
 
 #app {
   display: contents;
-  @apply text-blue-300;
+  @apply text-green-100;
 }
 
 :root {
@@ -14,7 +14,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #15191d;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -24,11 +24,11 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #f2b134;
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: #ffd36c;
 }
 
 div {
@@ -41,15 +41,15 @@ body {
   /* min-width: 320px; */
   min-height: 100vh;
   height: 100vh;
-  @apply from-slate-600 bg-gradient-to-br to-blue-950;
+  @apply from-[#252b30] bg-gradient-to-br to-[#123b30];
 }
 
 h2 {
-  @apply select-none bg-gradient-to-br from-black to-blue-950 p-1 px-3 font-bold text-white;
+  @apply select-none bg-gradient-to-br from-black to-[#123b30] p-1 px-3 font-bold text-white;
 }
 
 .header-t {
-  @apply select-none bg-gradient-to-br from-black to-blue-950 p-1 px-3 font-bold text-white rounded-t;
+  @apply select-none bg-gradient-to-br from-black to-[#123b30] p-1 px-3 font-bold text-white rounded-t;
 }
 
 .header-t + * {
@@ -62,7 +62,7 @@ h2 {
 
 .input,
 .btn {
-  @apply focus:outline focus:outline-2 focus:outline-cyan-400;
+  @apply focus:outline focus:outline-2 focus:outline-[#f2b134];
 }
 
 h1 {
@@ -71,15 +71,15 @@ h1 {
 }
 
 .btn {
-  @apply px-2 py-0.5 from-blue-800 bg-gradient-to-br to-cyan-700 rounded text-blue-100  border-blue-500;
+  @apply px-2 py-0.5 from-[#006747] bg-gradient-to-br to-[#174f3d] rounded text-white  border-[#f2b134];
 }
 
 .btn-inactive {
-  @apply px-2 py-0.5 bg-gray-600/50 rounded text-blue-100 border-blue-500;
+  @apply px-2 py-0.5 bg-gray-600/50 rounded text-white border-[#f2b134];
 }
 
 .btn-active {
-  @apply px-2 py-0.5 bg-green-500/50 rounded text-blue-100 border-blue-500;
+  @apply px-2 py-0.5 bg-green-500/50 rounded text-white border-[#f2b134];
 }
 
 button:hover {
