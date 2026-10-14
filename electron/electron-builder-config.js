@@ -24,7 +24,7 @@ const config = {
   asarUnpack: ['resources/**'],
   win: {
     artifactName: '${name}' + channelString + '-${arch}.${ext}',
-    executableName: 'MeshSense',
+    executableName: 'Fuggedaboutit Sense',
     signingHashAlgorithms: ['sha256'],
     publisherName: ['Affirmatech Inc.', 'Affirmatech Incorporated'],
     signAndEditExecutable: true,
@@ -39,10 +39,12 @@ const config = {
   },
   mac: {
     artifactName: '${name}' + channelString + '-${arch}.${ext}',
-    notarize: {
-      teamId: `${process.env.APPLE_TEAM_ID}`
-    },
-    extendInfo: [{ NSBluetoothAlwaysUsageDescription: 'Connect to your Meshtastic radio over Bluetooth.' }],\n    entitlementsInherit: 'build/entitlements.mac.plist',
+    target: [{ target: 'dmg', arch: ['x64'] }],
+    category: 'public.app-category.utilities',
+    identity: null,
+    extendInfo: { NSBluetoothAlwaysUsageDescription: 'Connect to your Meshtastic radio over Bluetooth.', NSBluetoothPeripheralUsageDescription: 'Connect to your Meshtastic radio over Bluetooth.' },
+    entitlementsInherit: 'build/entitlements.mac.plist',
+    icon: 'build/icon.icns',
   },
   dmg: {
     artifactName: '${name}' + channelString + '-${arch}.${ext}'
