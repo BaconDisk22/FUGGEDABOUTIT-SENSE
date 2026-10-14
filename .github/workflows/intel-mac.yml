@@ -24,11 +24,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
-          cache-dependency-path: |
-            ui/package-lock.json
-            api/package-lock.json
-            electron/package-lock.json
       - name: Install dependencies
         run: |
           (cd ui && npm ci)
@@ -42,7 +37,7 @@ jobs:
           (cd api && npm run build)
       - name: Make Jersey app icon
         run: |
-          python3 -m pip install --break-system-packages pillow || python3 -m pip install pillow
+          python3 -m pip install --user pillow
           python3 scripts/make_mac_icon.py
       - name: Build unsigned Intel macOS DMG
         env:
