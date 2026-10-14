@@ -65,14 +65,14 @@
         <div class="text-3xl font-bold text-white">🤌 Fuggedaboutit Sense — What Exit?</div>
         <div class="max-w-md mt-5 flex flex-col gap-4">
           <div>Yo! Available Bluetooth radios show up on the left.</div>
-          <div>If your device is on the network, enter it's IP address in the Device IP field and click Connect.</div>
+          <div>Got a radio on Wi-Fi? Enter its IP address in the Device IP field and hit Connect. Capisce?</div>
 
           {#if !$hasAccess}
-            <div>If you do not see the option to connect, you can get access by connecting via localhost or by setting your Access and User key.</div>
+            <div>Can't see Connect? Open the app locally, or configure your Access and User keys. No funny business.</div>
           {/if}
 
           <div>
-            For additional information, take a look at our <a target="_blank" href="https://affirmatech.com/meshsense/faq">FAQ</a> and
+            Need a hand? Fuggedaboutit — check the upstream <a target="_blank" href="https://affirmatech.com/meshsense/faq">FAQ</a> and
             <a target="_blank" href="https://affirmatech.com/meshsense/bluetooth">Bluetooth Tips</a>
           </div>
         </div>
