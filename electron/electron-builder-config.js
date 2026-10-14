@@ -7,8 +7,8 @@ let channelString = channel ? `-${channel}` : ''
  * @see https://www.electron.build/configuration/configuration
  */
 const config = {
-  appId: 'com.affirmatech.meshsense',
-  productName: 'MeshSense',
+  appId: 'com.bacondisk22.fuggedaboutitsense',
+  productName: 'Fuggedaboutit Sense',
   generateUpdatesFilesForAllChannels: true,
   directories: {
     buildResources: 'build'
@@ -42,12 +42,7 @@ const config = {
     notarize: {
       teamId: `${process.env.APPLE_TEAM_ID}`
     },
-    entitlementsInherit: 'build/entitlements.mac.plist',
-    extendInfo: [
-      {
-        NSDocumentsFolderUsageDescription: "Application requests access to the user's Documents folder."
-      }
-    ]
+    extendInfo: [{ NSBluetoothAlwaysUsageDescription: 'Connect to your Meshtastic radio over Bluetooth.' }],\n    entitlementsInherit: 'build/entitlements.mac.plist',
   },
   dmg: {
     artifactName: '${name}' + channelString + '-${arch}.${ext}'
@@ -63,7 +58,7 @@ const config = {
   npmRebuild: false,
   publish: {
     provider: 'generic',
-    url: 'https://affirmatech.com/download/meshsense'
+    url: 'https://github.com/BaconDisk22/MeshSense/releases/download'
   }
 }
 module.exports = config
