@@ -58,7 +58,7 @@ const config = {
   npmRebuild: false,
   publish: {
     provider: 'generic',
-    url: 'https://github.com/BaconDisk22/MeshSense/releases/download'
+    url: 'https://github.com/BaconDisk22/FUGGEDABOUTIT-SENSE/releases/download'
   }
 }
 module.exports = config
