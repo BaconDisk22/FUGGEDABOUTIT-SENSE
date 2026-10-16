@@ -9,6 +9,10 @@
   let selected = ''
   let showHistory = false
   let notifications = false
+  let compact = false
+  let search = ''
+  let onlyWatched = false
+  let showAlerts = true
   let now = Date.now()
   const maxSamples = 90
   const threshold = () => ($nodeInactiveTimer ?? 60) * 60 * 1000
@@ -20,6 +24,8 @@
   $: sampleCount = $packets.length
   $: quality = $nodes.length ? Math.round((activeNodes.length / $nodes.length * 70) + (directNodes.length / $nodes.length * 20) + (positioned.length / $nodes.length * 10)) : null
   $: chosen = $nodes.find((n) => String(n.num) === selected)
+  $: visibleNodes = $nodes.filter((n) => (!onlyWatched || watched[String(n.num)]) && ((n.user?.longName || String(n.num)).toLowerCase().includes(search.trim().toLowerCase())))
+  $: watchedCount = Object.values(watched).filter(Boolean).length
   $: series = history[selected] ?? []
   function record() {
     now = Date.now()
@@ -41,6 +47,8 @@
     }
     history = history
   }
+  function clearAlerts() { alerts = [] }
+  function toggleCompact() { compact = !compact; try { localStorage.setItem('jerseyCompact', String(compact)) } catch {} }
   function toggleWatch(id: string) {
     watched = { ...watched, [id]: !watched[id] }
     try { localStorage.setItem('jerseyWatch', JSON.stringify(watched)) } catch {}
@@ -51,6 +59,7 @@
   }
   onMount(() => {
     try { watched = JSON.parse(localStorage.getItem('jerseyWatch') || '{}') } catch {}
+    compact = localStorage.getItem('jerseyCompact') === 'true'
     notifications = typeof Notification !== 'undefined' && Notification.permission === 'granted'
     record()
     const timer = window.setInterval(record, 15000)
@@ -59,10 +68,11 @@
 </script>
 
 <section class="rounded-lg border border-[#F2B134]/40 bg-[#15191D]/85 p-3 text-green-50" aria-label="The Family Business network dashboard">
-  <div class="flex items-center justify-between gap-2 flex-wrap">
-    <h2 class="!bg-none !p-0 text-lg">🤌 The Family Business <span class="text-xs font-normal text-[#F2B134]">Live network intelligence</span></h2>
+  <div class="flex items-center justify-between gap-3 flex-wrap">
+    <div><h2 class="!bg-none !p-0 text-lg">🤌 The Family Business</h2><p class="text-xs text-white/60">Network overview · {watchedCount} watched · {sampleCount} packets</p></div>
     <div class="flex gap-2 text-xs items-center">
-      <span class:!text-green-300={$connectionStatus === 'connected'} class="text-amber-300">{$connectionStatus}</span>
+      <span class={$connectionStatus === 'connected' ? 'text-green-300' : 'text-amber-300'} aria-live="polite">● {$connectionStatus}</span>
+      <button class="btn" on:click={toggleCompact} aria-pressed={compact}>{compact ? 'Expand' : 'Compact'} view</button>
       <button class="btn" on:click={() => showHistory = !showHistory}>{showHistory ? 'Hide' : 'Show'} signal history</button>
       <button class="btn" on:click={enableNotifications}>Alerts {notifications ? 'enabled' : 'opt in'}</button>
     </div>
@@ -75,12 +85,15 @@
     <div class="card"><div class="text-[#F2B134]">What Exit?</div><strong>{positioned.length} mapped</strong></div>
     <div class="card"><div class="text-[#F2B134]">The Boss's Report</div><strong>{quality === null ? 'No data' : quality + '/100'}</strong></div>
   </div>
+  {#if !compact}
   <p class="text-xs text-white/60 mt-1">Health score is a local heuristic based on recently heard, direct, and positioned nodes—not a measurement of delivery reliability. {sampleCount} packets in the current log.</p>
-  <div class="mt-2 flex items-center gap-2 flex-wrap text-sm">
+  <div class="mt-3 flex items-center gap-2 flex-wrap text-sm">
+    <input class="input max-w-52" aria-label="Search nodes" placeholder="Search the neighborhood…" bind:value={search} />
+    <label class="flex items-center gap-1 text-xs"><input type="checkbox" bind:checked={onlyWatched} /> Watched only</label>
     <label for="jersey-node">How Ya Doin'? Signal:</label>
     <select id="jersey-node" class="input max-w-52" bind:value={selected}>
       <option value="">Choose a node</option>
-      {#each $nodes as node (node.num)}
+      {#each visibleNodes as node (node.num)}
         <option value={String(node.num)}>{node.user?.longName || node.num}</option>
       {/each}
     </select>
@@ -105,6 +118,8 @@
     </div>
   {/if}
   {#if alerts.length}
-    <div class="mt-2 text-xs" role="status"><strong class="text-[#F2B134]">We Got a Problem!</strong> {alerts[0]}</div>
+    <div class="mt-3 flex items-center justify-between gap-2 text-xs" role="status"><strong class="text-[#F2B134]">We Got a Problem! · {alerts.length} alerts</strong><div class="flex gap-2"><button class="btn" on:click={() => showAlerts = !showAlerts}>{showAlerts ? 'Hide' : 'Show'}</button><button class="btn" on:click={clearAlerts}>Clear</button></div></div>
+    {#if showAlerts}<ul class="mt-1 max-h-28 overflow-y-auto text-xs text-white/80">{#each alerts as alert, i (i)}<li class="border-t border-white/10 py-1">{alert}</li>{/each}</ul>{/if}
+  {/if}
   {/if}
 </section>
