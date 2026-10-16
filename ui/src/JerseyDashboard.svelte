@@ -13,6 +13,8 @@
   let search = ''
   let onlyWatched = false
   let showAlerts = true
+  let signalWarning = -110
+  let weakSignals: Record<string, boolean> = {}
   let now = Date.now()
   const maxSamples = 90
   const threshold = () => ($nodeInactiveTimer ?? 60) * 60 * 1000
@@ -39,6 +41,13 @@
         if (notifications && typeof Notification !== 'undefined' && Notification.permission === 'granted') new Notification('We Got a Problem!', { body: message })
       }
       previousActive[id] = isActive
+      const weak = isActive && typeof node.rssi === 'number' && node.rssi <= signalWarning
+      if (watched[id] && weak && weakSignals[id] === false) {
+        const message = `${node.user?.longName || id} has weak signal (${node.rssi} dBm)`
+        alerts = [message, ...alerts].slice(0, 15)
+        if (notifications && typeof Notification !== 'undefined' && Notification.permission === 'granted') new Notification('Weak Mesh Signal', { body: message })
+      }
+      weakSignals[id] = weak
       const old = history[id] ?? []
       const latest = old[old.length - 1]
       if (heard && (!latest || latest.at !== heard)) {
@@ -59,7 +68,8 @@
   }
   onMount(() => {
     try { watched = JSON.parse(localStorage.getItem('jerseyWatch') || '{}') } catch {}
-    compact = localStorage.getItem('jerseyCompact') === 'true'
+    try { compact = localStorage.getItem('jerseyCompact') === 'true' } catch {}
+    try { const stored = Number(localStorage.getItem('jerseySignalWarning')); if (stored >= -130 && stored <= -40) signalWarning = stored } catch {}
     notifications = typeof Notification !== 'undefined' && Notification.permission === 'granted'
     record()
     const timer = window.setInterval(record, 15000)
@@ -90,6 +100,10 @@
   <div class="mt-3 flex items-center gap-2 flex-wrap text-sm">
     <input class="input max-w-52" aria-label="Search nodes" placeholder="Search the neighborhood…" bind:value={search} />
     <label class="flex items-center gap-1 text-xs"><input type="checkbox" bind:checked={onlyWatched} /> Watched only</label>
+    <label for="jersey-signal-threshold">Weak signal alert:</label>
+    <select id="jersey-signal-threshold" class="input" bind:value={signalWarning} on:change={() => { try { localStorage.setItem('jerseySignalWarning', String(signalWarning)) } catch {} }}>
+      <option value={-120}>−120 dBm</option><option value={-110}>−110 dBm</option><option value={-100}>−100 dBm</option><option value={-90}>−90 dBm</option>
+    </select>
     <label for="jersey-node">How Ya Doin'? Signal:</label>
     <select id="jersey-node" class="input max-w-52" bind:value={selected}>
       <option value="">Choose a node</option>
